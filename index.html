@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NC Real Estate Exam Practice Quiz</title>
+<meta name="description" content="Free practice quizzes for the NC real estate exam, organized by exam section.">
+<style>
+  :root {
+    --bg: #f6f4f1;
+    --card: #ffffff;
+    --ink: #1f2328;
+    --muted: #5b616b;
+    --line: #dcd8d2;
+    --accent: #1f5f8b;
+    --accent-ink: #ffffff;
+    --accent-soft: #e6eff6;
+    --good: #1e7a46;
+    --good-soft: #e5f4ea;
+    --bad: #b3261e;
+    --bad-soft: #fbe9e7;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  main { max-width: 720px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.6rem; margin: 8px 0 4px; }
+  h2 { font-size: 1.25rem; margin: 0 0 12px; }
+  .sub { color: var(--muted); margin: 0 0 24px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+  }
+  .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+  .section-btn {
+    text-align: left;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .section-btn:hover { border-color: var(--accent); box-shadow: 0 2px 8px rgba(31,95,139,.12); }
+  .section-btn strong { display: block; font-size: 1.02rem; }
+  .section-btn span { color: var(--muted); font-size: .9rem; }
+  .section-btn.mix { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .section-btn.mix span { color: #d6e6f2; }
+  .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tabs { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; background: var(--card); }
+  .tabs button { border: 0; background: transparent; padding: 8px 16px; font: inherit; cursor: pointer; color: var(--muted); }
+  .tabs button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+  .link-btn { background: none; border: 0; color: var(--accent); font: inherit; cursor: pointer; padding: 4px 0; text-decoration: underline; }
+  .meta { display: flex; justify-content: space-between; color: var(--muted); font-size: .9rem; margin-bottom: 8px; }
+  .progress { height: 6px; background: var(--accent-soft); border-radius: 999px; overflow: hidden; margin-bottom: 20px; }
+  .progress div { height: 100%; background: var(--accent); width: 0; transition: width .25s; }
+  .prompt { font-size: 1.12rem; font-weight: 600; margin: 0 0 16px; }
+  .options { display: grid; gap: 10px; margin: 0 0 16px; padding: 0; list-style: none; }
+  .opt {
+    width: 100%;
+    display: flex; gap: 12px; align-items: flex-start;
+    text-align: left;
+    background: var(--card);
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font: inherit; color: inherit;
+    cursor: pointer;
+  }
+  .opt:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-soft); }
+  .opt:disabled { cursor: default; }
+  .opt .letter {
+    flex: none; width: 26px; height: 26px; border-radius: 50%;
+    border: 1.5px solid var(--line); display: grid; place-items: center;
+    font-size: .85rem; font-weight: 600; color: var(--muted);
+  }
+  .opt.correct { border-color: var(--good); background: var(--good-soft); }
+  .opt.correct .letter { background: var(--good); border-color: var(--good); color: #fff; }
+  .opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+  .opt.wrong .letter { background: var(--bad); border-color: var(--bad); color: #fff; }
+  .hint { background: #fff8e6; border: 1px solid #f0dca6; border-radius: 10px; padding: 10px 14px; margin: 0 0 16px; }
+  .feedback { border-radius: 10px; padding: 14px 16px; margin: 0 0 16px; }
+  .feedback.good { background: var(--good-soft); border: 1px solid #b9dfc6; }
+  .feedback.bad { background: var(--bad-soft); border: 1px solid #f1c4bf; }
+  .feedback strong { display: block; margin-bottom: 4px; }
+  .actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .btn {
+    background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 999px;
+    padding: 10px 22px; font: inherit; font-weight: 600; cursor: pointer;
+  }
+  .btn.secondary { background: var(--card); color: var(--accent); border: 1.5px solid var(--accent); }
+  .btn:disabled { opacity: .45; cursor: default; }
+  .score { font-size: 2.6rem; font-weight: 700; margin: 4px 0; }
+  .review-list { padding-left: 20px; }
+  .review-list li { margin-bottom: 10px; }
+  /* Flashcards */
+  .flash {
+    min-height: 260px; display: flex; flex-direction: column; justify-content: center;
+    cursor: pointer; text-align: left; width: 100%; font: inherit; color: inherit;
+  }
+  .flash .tag { color: var(--muted); font-size: .85rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .04em; }
+  .flash .answer { font-size: 1.15rem; font-weight: 700; color: var(--good); margin-bottom: 8px; }
+  footer { color: var(--muted); font-size: .85rem; margin-top: 32px; text-align: center; }
+  :focus-visible { outline: 3px solid #f2a900; outline-offset: 2px; }
+  [hidden] { display: none !important; }
+  @media (max-width: 480px) { .card { padding: 18px; } .prompt { font-size: 1.05rem; } }
+</style>
+</head>
+<body>
+<main>
+  <!-- Home -->
+  <section id="home">
+    <h1>NC Real Estate Exam Practice</h1>
+    <p class="sub">Pick a section to practice. Each one follows the national sections of the exam. Take it as a quiz, or flip through it as flashcards.</p>
+    <div class="grid" id="sections"></div>
+  </section>
+
+  <!-- Quiz / flashcards -->
+  <section id="study" hidden>
+    <div class="toolbar">
+      <button class="link-btn" id="backBtn">&larr; All sections</button>
+      <div class="tabs" role="group" aria-label="Study mode">
+        <button id="quizTab" aria-pressed="true">Quiz</button>
+        <button id="flashTab" aria-pressed="false">Flashcards</button>
+      </div>
+    </div>
+    <h2 id="studyTitle"></h2>
+
+    <div class="card" id="quizCard">
+      <div class="meta"><span id="count"></span><span id="scoreLive"></span></div>
+      <div class="progress" aria-hidden="true"><div id="bar"></div></div>
+      <p class="prompt" id="prompt"></p>
+      <ul class="options" id="options"></ul>
+      <div class="hint" id="hintBox" hidden></div>
+      <div id="feedback" aria-live="polite"></div>
+      <div class="actions">
+        <button class="link-btn" id="hintBtn">Show hint</button>
+        <button class="btn" id="nextBtn" disabled>Next</button>
+      </div>
+    </div>
+
+    <div class="card" id="resultCard" hidden>
+      <p class="sub" style="margin:0">Your score</p>
+      <p class="score" id="finalScore"></p>
+      <p id="finalMsg"></p>
+      <div id="missed"></div>
+      <div class="actions" style="margin-top:16px">
+        <button class="btn secondary" id="homeBtn">All sections</button>
+        <button class="btn" id="retryBtn">Try again</button>
+      </div>
+    </div>
+
+    <div id="flashWrap" hidden>
+      <div class="meta"><span id="flashCount"></span><span>Tap the card to flip it</span></div>
+      <button class="card flash" id="flashCard" aria-live="polite"></button>
+      <div class="actions" style="margin-top:16px">
+        <button class="btn secondary" id="prevCard">Previous</button>
+        <button class="btn" id="nextCard">Next</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    A free study aid made by a classmate. These are rewritten practice questions, not official exam content.
+    When in doubt, go with your instructor and course materials.
+  </footer>
+</main>
+
+<script>
+const DATA = {"categories": ["Contracts & Agency", "Real Estate Math", "Financing", "Valuation", "Real Estate Practice", "Property Disclosures", "Ownership", "Real Property"], "questions": [{"category": "Real Property", "prompt": "When deciding whether an item is a fixture or personal property, which of these is NOT one of the standard tests?", "options": ["How the item is attached to the property", "How much the item cost", "What the person who installed it intended", "Whether the item was adapted to fit the property"], "answer": 1, "hint": "Think of the memory aid MARIA: Method, Adaptability, Relationship, Intention, Agreement.", "explanation": "Price has nothing to do with it. Fixture tests look at how the item is attached, whether it was adapted to the property, the relationship of the parties, the intent of the person who attached it, and any agreement between the parties (MARIA)."}, {"category": "Property Disclosures", "prompt": "An agent describes a listing as having \"the most stunning sunsets in the county.\" This kind of exaggerated opinion about a property's good qualities is called:", "options": ["Fraud", "Misrepresentation", "Overstating", "Puffing"], "answer": 3, "hint": "It's opinion, not a false statement of fact.", "explanation": "Puffing is exaggerated opinion or sales talk that a reasonable buyer wouldn't take as a statement of fact. Fraud and misrepresentation involve false statements of material fact."}, {"category": "Real Estate Practice", "prompt": "Two competing brokers who work the same neighborhood agree to charge identical commission rates so neither loses business to the other. This agreement:", "options": ["Is fine as long as both brokers agree", "Violates Regulation Z of the Truth in Lending Act", "Violates the Sherman Antitrust Act", "Violates RESPA"], "answer": 2, "hint": "Which law covers price fixing?", "explanation": "Competitors agreeing on prices is price fixing, which the Sherman Antitrust Act prohibits. Regulation Z covers lending disclosures, and RESPA covers disclosure of settlement costs."}, {"category": "Real Estate Practice", "prompt": "Under IRS rules, which of these statements about employees and independent contractors at a brokerage is FALSE?", "options": ["A firm can let an independent contractor run their own ads, as long as the ads follow the firm's advertising rules.", "A firm can require an independent contractor to carry a cell phone.", "A firm withholds taxes from an employee's pay.", "A firm can set required working hours for an employee."], "answer": 1, "hint": "A firm can control the results and legal compliance of a contractor's work, but not how they do it.", "explanation": "A firm can't dictate the tools or methods an independent contractor uses, so requiring a cell phone points to an employee relationship. Firms must still supervise advertising for legal compliance, and withholding taxes and setting hours are normal for employees."}, {"category": "Contracts & Agency", "prompt": "A buyer asks their agent to write an offer, and the agent refuses. The agent then ends the agency relationship in writing. Which statement is true?", "options": ["The agent will face disciplinary action.", "The agent is allowed to end the agency relationship on their own.", "The agent can end the relationship, but only after writing the offer.", "The agent is not allowed to write that kind of offer."], "answer": 1, "hint": "Licensees may renounce; clients may revoke.", "explanation": "Either side can end an agency relationship at any time. The licensee renounces, the client revokes. Ending it early may be a breach of contract with consequences, but it's still allowed."}, {"category": "Property Disclosures", "prompt": "A listing agent knows about a defect in the home but gets sick, and another agent at the same firm takes over the listing. The new agent:", "options": ["Only has to disclose the defect if they personally knew about it", "Only has to disclose the defect if a buyer asks", "Has no liability because of their fiduciary duty to the seller", "Has the same legal responsibility for the defect as the original agent, whether or not they were told about it"], "answer": 3, "hint": "Who is the listing agreement actually with: the agent or the firm?", "explanation": "The listing belongs to the firm, so what the firm's agent knew carries over to the agent who takes over. Duty to the seller never permits hiding a material fact from buyers."}, {"category": "Property Disclosures", "prompt": "Which is the BEST definition of a material fact?", "options": ["A defect that could keep the buyer from getting clear title", "A defect that isn't easy to see", "Information that can only be found by physically inspecting the property", "Information that would affect a buyer's decision to buy"], "answer": 3, "hint": "Pick the broadest answer. The others are just examples.", "explanation": "A material fact is anything that would affect a reasonable buyer's decision. That includes conditions that significantly lower the property's value, weaken the structure, pose a real health risk to occupants, or show a party can't or won't perform under the contract."}, {"category": "Real Estate Math", "prompt": "A homeowner's lot measures 180 feet of frontage by 200 feet deep. A zoning decision lets them fence only three sides: both side lines and one frontage line. How many linear feet of fencing do they need?", "options": ["400 linear feet", "560 linear feet", "720 linear feet", "760 linear feet"], "answer": 1, "hint": "Add up only the sides being fenced. The first measurement is usually the frontage.", "explanation": "Three sides means one frontage side plus the two depth sides: 180 + 200 + 180 = 560 feet. All four sides would be 760. The first number in a lot measurement is usually the frontage."}, {"category": "Ownership", "prompt": "What is a main advantage of owning property in severalty?", "options": ["Flexibility", "Inheritability", "Joint occupancy", "Shared risk"], "answer": 0, "hint": "Severalty means the owner is \"severed\" from everyone else.", "explanation": "Severalty means one person or entity owns the property alone, so they can sell, mortgage, or lease it without anyone else's consent. Inheritability isn't unique to severalty, and joint occupancy and shared risk describe co-ownership."}, {"category": "Ownership", "prompt": "A summary of a property's recorded ownership history is called a(n):", "options": ["Abstract of title", "Chain of title", "Lis pendens", "Title insurance policy"], "answer": 0, "hint": "One of these is the full history, and one is the condensed version.", "explanation": "The chain of title is the complete history of recorded interests. The abstract of title is the condensed summary of that history. A lis pendens is notice of a pending lawsuit, and title insurance protects against title defects."}, {"category": "Ownership", "prompt": "Which statement about a judgment lien is true?", "options": ["It applies only to personal property.", "It applies only to real property.", "It automatically takes first lien position.", "Once it's paid, a satisfaction of judgment must be recorded to clear the record."], "answer": 3, "hint": "Paying a lien doesn't remove it from public records by itself.", "explanation": "A judgment lien is an involuntary, general lien the winner of a civil lawsuit can place on the loser's property, real and personal. It doesn't jump to first position. Once paid, a satisfaction of judgment must be recorded to release it."}, {"category": "Real Property", "prompt": "Which of these developer plans would need a zoning variance or rezoning because it makes the land's use more intensive?", "options": ["Adding a deed restriction that bans further subdividing of lots", "Adding a deed restriction that requires earth-tone paint colors", "Building fewer outbuildings per lot than the law allows", "Increasing the number of lots per acre"], "answer": 3, "hint": "Which option puts more on the land than zoning currently allows?", "explanation": "More lots per acre means higher density, a more intensive use that zoning may not allow without a variance or rezone. The other options are as strict as zoning or stricter, so they need no zoning approval."}, {"category": "Contracts & Agency", "prompt": "A home is listed at $310,000. The buyers offer $300,000 and ask that the patio furniture stay. The sellers accept the price but strike the furniture line, initial it, sign, and send it back. What's the status?", "options": ["There's now a binding contract signed by everyone.", "The deal is dead and the buyers have to start over with a new property.", "The sellers can still accept the original offer if the buyers refuse the change.", "The original offer is terminated, and the sellers have made a counteroffer."], "answer": 3, "hint": "Acceptance has to match the offer exactly.", "explanation": "Any change to an offer, even a small one, rejects it and creates a counteroffer. The original offer is gone, so the sellers can't go back and accept it. Now it's the buyers' turn to accept, reject, or counter."}, {"category": "Contracts & Agency", "prompt": "A purchase contract for real property doesn't include an adequate description of the land. The contract is:", "options": ["Unenforceable", "Valid", "Void", "Voidable"], "answer": 2, "hint": "An adequate property description is an essential element of a real estate contract.", "explanation": "A real estate sales contract must identify the property clearly. Without an adequate description, an essential element is missing and the contract is void, meaning it has no legal effect from the start."}, {"category": "Contracts & Agency", "prompt": "In a dual agency, which duty can the parties agree to waive?", "options": ["The duty to disclose conflicts of interest", "The duty to recommend experts on questions outside the agent's knowledge", "The duty to present more offers after a contract is accepted", "The duty not to favor one party over the other"], "answer": 2, "hint": "One of these can be waived, but only if the seller asks in writing.", "explanation": "An agent must normally present every offer up to and including closing day. The seller can waive that duty for offers after the property goes under contract, but only in writing. Disclosure, reasonable skill and care, and staying neutral in a dual agency can't be waived. Remember the duties with OLDCAR: Obedience, Loyalty, Disclosure, Confidentiality, Accounting, Reasonable skill and care."}, {"category": "Contracts & Agency", "prompt": "A home is listed for $150,000 under a typical listing agreement. In which situation would the broker NOT earn a commission?", "options": ["The seller turns down a $140,000 offer from a qualified buyer.", "The seller accepts a $140,000 offer from a qualified buyer.", "The seller accepts a $150,000 offer, but the title turns out to be unmarketable.", "The seller turns down a $150,000 offer from a qualified buyer."], "answer": 0, "hint": "The broker's job is to find a ready, willing, and able buyer on the listing terms.", "explanation": "A broker earns the commission by finding a ready, willing, and able buyer on the listing terms, or on other terms the seller accepts. An offer below list price that the seller rejects doesn't meet the listing terms. A full-price offer the seller rejects, or a deal that fails because of the seller's title problem, still earns the commission."}, {"category": "Contracts & Agency", "prompt": "Which of these ends an agency relationship by operation of law?", "options": ["The broker renounces the agency.", "The client revokes the agency.", "The broker and client agree to end it.", "The listed house burns down."], "answer": 3, "hint": "Which one happens without anyone choosing to end it?", "explanation": "Termination by operation of law happens automatically, without either party acting. Destruction of the property, death or incapacity of either party, and bankruptcy are examples. Renouncing, revoking, and mutual agreement are all actions by the parties."}, {"category": "Real Estate Practice", "prompt": "A broker is joining a firm as an independent contractor. What must the firm provide?", "options": ["Advertising materials", "A written independent contractor agreement", "Business cards", "Insurance coverage"], "answer": 1, "hint": "Think of the IRS requirements for independent contractor status.", "explanation": "To treat an agent as an independent contractor, the IRS requires a written agreement stating that relationship. The agent must also hold a license, and pay must be based on production rather than hours. Ads, cards, and insurance are optional business choices."}, {"category": "Real Estate Math", "prompt": "A buyer needs 5 to 10 acres for a new building. She finds a rectangular parcel measuring 400 feet by 800 feet. How many acres is it?", "options": ["5 acres", "7.35 acres", "8.6 acres", "10 acres"], "answer": 1, "hint": "One acre is 43,560 square feet.", "explanation": "First find the square footage: 400 x 800 = 320,000 square feet. Then divide by 43,560 square feet per acre: 320,000 ÷ 43,560 = 7.35 acres."}, {"category": "Property Disclosures", "prompt": "Which statement about lead-based paint disclosure is true?", "options": ["It applies to single-family homes but not condos.", "Buyers must be offered the option to waive their inspection period.", "It's required for homes built after 1978.", "Tenants must get a 10-day period to inspect for lead."], "answer": 1, "hint": "The key year is 1978. Is the rule for homes built before or after it?", "explanation": "Buyers of pre-1978 housing get 10 days to test for lead, and they can waive that right in writing, so the disclosure has to offer that choice. The rule covers condos too, applies to homes built BEFORE 1978, and tenants get the disclosure but not the 10-day inspection period."}, {"category": "Real Estate Practice", "prompt": "Which of these is an allowed exception under the federal Fair Housing Act?", "options": ["A property management firm screens rental applicants based on whether they have children.", "A duplex owner who lives in one unit tells the listing agent not to show the other unit to women.", "A church-run retreat lodge limits stays to church members.", "The owner of a six-unit building rents only to white tenants."], "answer": 2, "hint": "Look for a recognized exemption, and remember that using an agent cancels most of them.", "explanation": "Religious organizations can give preference to their own members for housing they own, as long as membership isn't limited by race. Once an agent is involved, no transaction is exempt, so the duplex owner loses the exemption. Race discrimination is never allowed. Protected classes are FReSH CoRN: Familial status, Religion, Sex, Handicap, Color, Race, National origin. Age isn't one of them, and NC doesn't exempt for-sale-by-owner deals."}, {"category": "Real Estate Practice", "prompt": "An agent faxes clients flyers about properties they might like. What must every fax include?", "options": ["The address of each property", "The agent's license number", "The brokerage's phone number", "Instructions for opting out of future faxes"], "answer": 3, "hint": "Think about the federal law that targets junk faxes.", "explanation": "Federal junk fax rules require marketing faxes to include a clear way to opt out of future faxes, even when they go to people you already work with. The other details may be good practice, but they're not what the fax rule requires."}, {"category": "Ownership", "prompt": "To patch up her marriage, a homeowner signs a quitclaim deed putting her house into joint tenancy with her husband. She tells him about it, but never records or hands over the deed, and it's lost by the time they divorce. Does the husband have a valid claim to the property?", "options": ["No, though recording the deed would have given constructive notice.", "No, because the husband never signed the deed.", "Yes, because a court will hear oral evidence about a contract.", "Yes, because a quitclaim deed doesn't need the grantee's signature."], "answer": 0, "hint": "What has to happen to a signed deed before title actually transfers?", "explanation": "A deed transfers title only when it's delivered to and accepted by the grantee. Telling someone about a deed doesn't count as delivery. If it had been recorded, it would have given constructive notice and been strong evidence of delivery. The grantee never has to sign a deed."}, {"category": "Real Estate Practice", "prompt": "What would protect a buyer if the home's heating system failed after closing?", "options": ["An agency disclosure statement", "A home protection plan (home warranty)", "Mortgage insurance", "Title insurance"], "answer": 1, "hint": "Which one covers the house's systems and appliances?", "explanation": "A home protection plan, or home warranty, covers repairs to major systems and appliances like heating, cooling, and plumbing. Mortgage insurance protects the lender if the borrower defaults, title insurance covers title defects, and an agency disclosure explains who the agent represents."}, {"category": "Ownership", "prompt": "A seller can't give marketable title because of a cloud on the title. To clear it, they should file a(n):", "options": ["Adverse possession claim", "Quiet title action", "Quitclaim deed", "Partition suit"], "answer": 1, "hint": "Which one asks a court to settle who owns the property?", "explanation": "A quiet title action is a lawsuit that asks a court to settle competing claims and remove the cloud. A quitclaim deed can release one person's claim if they cooperate, but a court action is the standard remedy. Partition divides co-owned property, and adverse possession is a way to gain title."}, {"category": "Real Property", "prompt": "A city is widening a road and will take 10 feet of a homeowner's front yard, paying fair compensation. The act of taking the land is called:", "options": ["Eminent domain", "Foreclosure", "Involuntary seizure", "Condemnation"], "answer": 3, "hint": "One answer is the government's power, and one is the actual act of using it.", "explanation": "Eminent domain is the government's right to take private property for public use with just compensation. Condemnation is the actual process of taking it. The question asks about the taking itself, so the answer is condemnation. This is a common exam trap."}, {"category": "Property Disclosures", "prompt": "Federal rules require many buyers and tenants to receive disclosures about which environmental hazard?", "options": ["Lead-based paint", "Radon", "Asbestos", "Underground storage tanks"], "answer": 0, "hint": "This federal disclosure applies to housing built before 1978.", "explanation": "Federal law requires sellers and landlords of most housing built before 1978 to disclose known lead-based paint hazards and give out an EPA pamphlet. Radon, asbestos, and storage tanks can be material facts, but they don't have a matching federal disclosure form."}, {"category": "Financing", "prompt": "A homeowner owes more on his mortgage than the house will likely sell for, so he asks his lender about a short sale. What should he keep in mind?", "options": ["He could get a 1099 from the lender for the forgiven debt, or face a deficiency judgment.", "His credit score will be protected.", "He can probably get a new home loan right away.", "There probably won't be any downside."], "answer": 0, "hint": "What happens to the unpaid part of the loan?", "explanation": "In a short sale, the lender accepts less than what's owed. The lender may report the forgiven amount to the IRS on a 1099 as possible taxable income, or pursue a deficiency judgment for the shortfall unless it agrees to waive it. Short sales also hurt credit and can delay new financing."}, {"category": "Real Property", "prompt": "A buyer purchases a landlocked lot on the condition that the seller grant an access easement across the seller's neighboring land. The easement is never recorded. When the buyer later sells the lot, does the easement still benefit the new owner?", "options": ["No, because it was never recorded.", "No, because the deed didn't mention it.", "Yes, because this kind of easement runs with the land.", "Yes, because the buyer is the servient owner and the seller is the dominant owner."], "answer": 2, "hint": "Does the easement belong to the person or to the land?", "explanation": "An access easement that benefits a particular parcel is an easement appurtenant. It attaches to the land and passes to each new owner of the benefited parcel. The landlocked lot is the dominant estate, and the seller's land that it crosses is the servient estate, so the answer calling the buyer the servient owner has the roles backwards."}, {"category": "Real Estate Math", "prompt": "A borrower is buying a home for $200,000 with 20% down. The loan is a 30-year fixed at 6.5%, and the amortization chart shows a monthly P&I factor of $6.32 per $1,000 borrowed. What is the monthly P&I payment?", "options": ["$1,011.20", "$1,264.00", "$1,000.00", "$800.00"], "answer": 0, "hint": "Figure out the loan amount first. The down payment isn't borrowed.", "explanation": "Down payment: 20% of $200,000 = $40,000, so the loan is $160,000. That's 160 thousands. 160 × $6.32 = $1,011.20 per month. The $1,264 option is the trap: it uses the full price instead of the loan amount."}, {"category": "Contracts & Agency", "prompt": "The phrase \"meeting of the minds\" is connected to which contract element?", "options": ["Full performance of the contract", "Offer and acceptance", "Execution", "Tender of an offer"], "answer": 1, "hint": "When do both sides actually agree on the same terms?", "explanation": "A meeting of the minds (mutual assent) happens when one party's offer is accepted by the other on exactly the same terms. That's offer and acceptance, one of the essential elements of a valid contract."}, {"category": "Valuation", "prompt": "An old mansion has been converted into three rental apartments. Which appraisal approach is best for valuing it?", "options": ["Cost approach", "Income approach", "Reconciliation", "Sales comparison approach"], "answer": 1, "hint": "What does the property produce now?", "explanation": "The property now produces rent, so the income approach fits best. It values the property based on the income it generates. Reconciliation is the final step of weighing all approaches, not an approach itself."}, {"category": "Valuation", "prompt": "An owner splits a large bedroom into two smaller ones with a wall, and you have to walk through one new bedroom to reach the other. An appraiser would adjust the value for:", "options": ["Economic obsolescence", "Physical obsolescence", "Functional obsolescence", "Reconciliation"], "answer": 2, "hint": "The problem is the layout, not wear and tear or the neighborhood.", "explanation": "Functional obsolescence is a loss in value from poor design or an outdated layout, like a bedroom you can only reach through another bedroom. Physical obsolescence is wear and tear, and economic (external) obsolescence comes from outside the property, like a nearby landfill."}, {"category": "Valuation", "prompt": "Which of these is a characteristic of value?", "options": ["Obsolescence", "Depreciation", "Appreciation", "Utility"], "answer": 3, "hint": "Remember DUST.", "explanation": "The four characteristics of value are DUST: Demand, Utility, Scarcity, and Transferability. Obsolescence, depreciation, and appreciation are changes in value, not characteristics of it."}, {"category": "Valuation", "prompt": "Which is the best definition of market price?", "options": ["The amount actually paid for the property", "The original cost plus improvements, minus depreciation", "The price the property would most likely bring in a normal sale", "What the property is worth to a particular owner"], "answer": 0, "hint": "Price is what happened. Value is what's likely.", "explanation": "Market price is what a buyer actually paid. The price a property would most likely bring in a normal sale is the definition of market value, a common trap. Cost plus improvements minus depreciation is adjusted basis, and value to one particular owner is subjective value."}, {"category": "Valuation", "prompt": "When an appraiser adjusts for differences between the subject property and the comparables, the appraiser always:", "options": ["Adjusts the subject property", "Averages the differences", "Adjusts the comparables", "Uses homes currently for sale to balance it out"], "answer": 2, "hint": "The subject's value is what you're trying to find.", "explanation": "The appraiser adjusts the comparables to make them look like the subject. If a comp has something the subject doesn't, subtract its value from the comp. If the comp lacks something the subject has, add it. Never adjust the subject."}, {"category": "Valuation", "prompt": "An investor looks at a property listed for $200,000 that brings in $1,500 a month in net operating income. They decide to offer $180,000 instead. What income approach analysis did they use?", "options": ["Capitalization rate", "Competitive market analysis", "Gross rent multiplier", "Initial basis"], "answer": 0, "hint": "The question mentions net operating income, not gross rent.", "explanation": "Cap rate analysis uses net operating income. Annual NOI is $18,000, which is a 9% return at $200,000 and a 10% return at $180,000. The investor lowered the price to get the return they wanted. A gross rent multiplier uses gross rent, not NOI."}, {"category": "Valuation", "prompt": "Which of these appraisals requires a state-certified appraiser?", "options": ["Any home valued at $200,000", "Any home valued at $500,000", "Any appraisal for a loan from a federally insured lender", "An appraisal for an FHA loan"], "answer": 3, "hint": "Think about government-backed loan programs.", "explanation": "FHA requires its appraisals to be done by a state-certified appraiser. Value alone doesn't set the requirement, and many loans from federally insured lenders can use a licensed appraiser or fall under exemptions."}, {"category": "Valuation", "prompt": "An appraiser has two comparables. Comp A needs three adjustments that net out to +$2,000. Comp B needs just one adjustment of +$1,500. Which is the better comparable?", "options": ["Neither. You adjust the subject, not the comps.", "Comp B, because its adjustment is positive", "Comp B, because it needs only one adjustment", "Comp A, because its adjustments net out"], "answer": 2, "hint": "The best comp is the one that's already most like the subject.", "explanation": "The best comparable is the one that needs the fewest and smallest adjustments, because it's already the most similar to the subject. Whether an adjustment is positive or negative doesn't make a comp better. And remember, you always adjust the comps, not the subject."}, {"category": "Real Estate Math", "prompt": "A rental building could bring in $150,000 a year in potential gross income. Normal vacancy for the area is 4%, and annual operating expenses are $12,000. Using a 12% capitalization rate, what is the property worth?", "options": ["$1,100,000", "$1,200,000", "$1,250,000", "$132,000"], "answer": 0, "hint": "Gross income − vacancy − expenses = NOI. Then NOI ÷ cap rate = value.", "explanation": "Vacancy: 4% of $150,000 = $6,000, leaving $144,000 effective gross income. Subtract $12,000 in expenses for a net operating income of $132,000. Value = $132,000 ÷ 0.12 = $1,100,000. The other options skip a step: $1,200,000 forgets expenses, and $1,250,000 forgets vacancy and expenses."}, {"category": "Contracts & Agency", "prompt": "The parties to a contract undo it and put themselves back where they were before they signed. The contract has been:", "options": ["Canceled", "Rescinded", "Revoked", "Performed"], "answer": 1, "hint": "Which word means \"unmade, as if it never happened\"?", "explanation": "Rescission undoes a contract and returns everyone to their original positions, as if the contract never existed. Cancellation ends the contract going forward but doesn't necessarily restore everyone. Revocation is withdrawing an offer or agency, and performance means everyone did what they promised."}, {"category": "Contracts & Agency", "prompt": "A buyer makes an offer. Instead of accepting, the sellers send back a written counteroffer. What happens to the buyer's original offer?", "options": ["It's still binding on the buyer if the seller wants it", "It no longer exists because of the counteroffer", "It's subject to a three-day right of rescission", "The broker can bring it back"], "answer": 1, "hint": "A counteroffer is also a rejection.", "explanation": "A counteroffer rejects the original offer and replaces it with a new one. The original offer is gone for good, so the sellers can't go back and accept it later. Only the counteroffer is on the table now."}, {"category": "Contracts & Agency", "prompt": "In a purchase offer, the consideration is best described as the:", "options": ["Amount of earnest money", "Good faith deposit", "Purchase price", "Cash down payment"], "answer": 2, "hint": "What is the buyer giving in exchange for the property?", "explanation": "Consideration is what each side gives up in the exchange. In a purchase contract, the buyer gives the purchase price and the seller gives the property. Earnest money and a down payment are just parts of how the price gets paid."}, {"category": "Real Estate Math", "prompt": "A seller paid her full-year property taxes of $3,650 on January 1. Closing is April 10, and the seller is counted as owning the closing day. Using a 365-day year, how much is the seller credited at closing?", "options": ["$2,650", "$1,000", "$2,640", "$3,650"], "answer": 0, "hint": "She prepaid for the whole year. Which days is she paying for that belong to the buyer?", "explanation": "Daily tax: $3,650 ÷ 365 = $10. The seller owns January 1 through April 10: 31 + 28 + 31 + 10 = 100 days. The buyer owns the other 265 days. Since the seller already paid for those days, she's credited 265 × $10 = $2,650. The $1,000 option is the seller's own share, the trap answer."}, {"category": "Contracts & Agency", "prompt": "A buyer makes an offer on a home but doesn't include any earnest money. The offer is:", "options": ["Void", "Unenforceable", "Valid if the seller accepts it", "Void because it lacks consideration"], "answer": 2, "hint": "Is earnest money actually required to make a contract?", "explanation": "Earnest money isn't required for a valid contract. It just shows the buyer is serious. The consideration in a purchase contract is the parties' promises to each other, so the offer can still become a valid contract if the seller accepts it."}, {"category": "Contracts & Agency", "prompt": "A purchase contract says \"time is of the essence.\" This means:", "options": ["Only the seller has to meet the contract deadlines.", "Only the buyer has to meet the contract deadlines.", "Only the agent has to meet the contract deadlines.", "Everyone has to meet their contract duties on or before the dates in the contract."], "answer": 3, "hint": "Does the phrase single anyone out?", "explanation": "\"Time is of the essence\" makes the contract's dates strict for all parties. Missing a deadline can be a breach of contract, so every party has to perform on or before the dates set in the contract."}, {"category": "Financing", "prompt": "A borrower wants a 100% loan with no down payment. Which loan type would they most likely need?", "options": ["Conventional loan", "FHA loan", "Jumbo loan", "VA loan"], "answer": 3, "hint": "Which loan program is a benefit for eligible veterans?", "explanation": "VA loans, guaranteed by the Department of Veterans Affairs, let eligible veterans and service members borrow up to 100% of the price with no down payment. FHA loans need a small down payment (about 3.5%), and conventional and jumbo loans usually need more."}, {"category": "Real Estate Math", "prompt": "Zoning rules say a lot must be at least four times the size of the building on it. An architect designs a 25,000 square foot building. What is the smallest whole number of acres the lot can be?", "options": ["1 acre", "2 acres", "3 acres", "4 acres"], "answer": 2, "hint": "Multiply first, then convert using 43,560 square feet per acre.", "explanation": "Minimum lot size: 25,000 × 4 = 100,000 square feet. Convert to acres: 100,000 ÷ 43,560 = 2.3 acres. Since 2 acres would be too small, the lot needs to be at least 3 acres."}, {"category": "Contracts & Agency", "prompt": "Which of these is a unilateral contract?", "options": ["Exclusive agency listing", "Exclusive right-to-sell listing", "Lease", "Option"], "answer": 3, "hint": "In which contract is only one side bound to act?", "explanation": "In an option, the owner (optionor) promises to sell at a set price if the buyer (optionee) chooses to buy, but the optionee doesn't have to buy. Only one party is bound, so it's unilateral. Exclusive listings and leases bind both sides, so they're bilateral."}, {"category": "Financing", "prompt": "Which federal law requires lenders to give every loan applicant a booklet about shopping for a home loan within three business days of applying?", "options": ["Fraud Enforcement and Recovery Act", "Home Loan Disclosure Act", "RESPA", "Truth in Lending Act"], "answer": 2, "hint": "This law is about settlement costs and the home-buying process.", "explanation": "RESPA (the Real Estate Settlement Procedures Act) requires lenders to give applicants a home loan shopping booklet within three business days. RESPA covers settlement costs and the closing statement. Truth in Lending covers the APR and finance charges."}, {"category": "Real Estate Math", "prompt": "A buyer purchases a rental home with a tenant in it. The seller is holding the tenant's $600 security deposit and has already collected January's rent of $620. Closing is January 13, and the seller is counted as owning the closing day. What is the credit on the closing statement?", "options": ["Credit to the buyer for $960", "Credit to the buyer for $360", "Credit to the seller for $360", "Credit to the seller for $960"], "answer": 0, "hint": "The seller is holding money that now belongs to the buyer. How much rent covers the buyer's days?", "explanation": "Daily rent: $620 ÷ 31 days = $20. The buyer owns January 14–31, which is 18 days: 18 × $20 = $360. The security deposit transfers to the new owner in full: $600. Total credit to the buyer: $360 + $600 = $960. Tip from class: draw the calendar and count the days."}, {"category": "Financing", "prompt": "From the borrower's point of view, what's the main advantage of private mortgage insurance (PMI)?", "options": ["It lets them make a smaller down payment.", "It protects them if they default.", "It protects their title against other claims.", "It pays for damage from fire or flooding."], "answer": 0, "hint": "PMI protects the lender, so what does the borrower get out of it?", "explanation": "PMI protects the lender, not the borrower, if the borrower defaults. The borrower benefits because lenders will accept a down payment under 20% when PMI is in place. Title insurance covers title claims, and homeowner's insurance covers fire and flood damage."}, {"category": "Financing", "prompt": "When a buyer applies for a mortgage, what does Regulation Z (Truth in Lending) require the lender to give them?", "options": ["A loan commitment", "A disclosure of the APR", "A closing statement", "A copy of the appraisal"], "answer": 1, "hint": "Truth in Lending is about the true cost of borrowing.", "explanation": "Regulation Z requires lenders to disclose loan costs, including the annual percentage rate (APR), points, and finance charges. It doesn't require a loan commitment. The closing statement falls under RESPA, which covers the costs of buying and selling a home such as title, insurance, attorney, and recording fees."}, {"category": "Financing", "prompt": "For which borrower would an adjustable-rate mortgage (ARM) be a BAD idea?", "options": ["Someone about to retire", "Someone planning to refinance in a few years", "Someone who'll only live in the home a short time", "Someone whose income is expected to rise soon"], "answer": 0, "hint": "Who can least afford for their payment to go up?", "explanation": "An ARM's rate and payment can rise over time. A retiree is usually moving to a fixed or lower income and can't absorb higher payments. ARMs can make sense for people who will move or refinance before the rate adjusts, or whose income will grow."}, {"category": "Financing", "prompt": "On a closing statement, the buyer's new mortgage loan shows up as a:", "options": ["Credit to the seller", "Debit to the seller", "Credit to the buyer", "Debit to the buyer"], "answer": 2, "hint": "Does the loan increase or reduce what the buyer has to bring to closing?", "explanation": "The loan money pays part of the purchase price, which reduces the cash the buyer has to bring to closing. Anything that reduces what a party owes is a credit to that party. The loan has nothing to do with the seller's side of the statement."}, {"category": "Real Estate Math", "prompt": "A home is listed at $110,000, and the buyers' offer of $10,000 less is accepted. They get an 80% loan-to-value loan for 30 years at 5.5%. Annual taxes are $3,600 and annual insurance is $1,200. The amortization table shows a monthly P&I payment of $454 for an $80,000, 30-year loan at 5.5%. What is their monthly PITI payment?", "options": ["$454", "$467", "$854", "$867"], "answer": 2, "hint": "PITI = Principal + Interest + Taxes + Insurance, all monthly.", "explanation": "Sale price: $110,000 − $10,000 = $100,000. Loan: 80% of $100,000 = $80,000, so P&I is $454 from the table. Monthly taxes: $3,600 ÷ 12 = $300. Monthly insurance: $1,200 ÷ 12 = $100. PITI = $454 + $300 + $100 = $854. The $454 option is the trap: that's P&I only."}, {"category": "Real Estate Math", "prompt": "A borrower's monthly principal and interest payment is $8.56 per $1,000 borrowed. On a $150,000 loan paid off over 20 years, how much total interest will they pay?", "options": ["$158,160", "$308,160", "$150,000", "$1,284"], "answer": 0, "hint": "Find the total of all payments, then subtract what was borrowed.", "explanation": "$150,000 ÷ 1,000 = 150 thousands. 150 × $8.56 = $1,284 per month. $1,284 × 12 = $15,408 per year. $15,408 × 20 = $308,160 in total payments. Subtract the $150,000 principal: $308,160 − $150,000 = $158,160 in interest."}, {"category": "Financing", "prompt": "A homeowner is behind on mortgage payments and the lender is threatening foreclosure. Instead, the homeowner agrees to sign the property over to the lender. This is called a(n):", "options": ["Acceleration", "Defeasance", "Alienation", "Deed in lieu of foreclosure"], "answer": 3, "hint": "\"In lieu\" means \"instead of.\"", "explanation": "A deed in lieu of foreclosure voluntarily transfers the property to the lender to avoid foreclosure. Acceleration lets the lender demand the full balance after default. Defeasance cancels the lender's interest once the loan is paid off. Alienation is a transfer of ownership, and an alienation clause lets the lender call the loan due if the property is sold."}]};
+const MIX_SIZE = 15;
+const LETTERS = "ABCD";
+const $ = id => document.getElementById(id);
+
+let order = [], deck = [], idx = 0, score = 0, answered = false, missed = [], mode = "quiz", flipped = false, currentKey = null;
+
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+function buildHome() {
+  const box = $("sections");
+  const mix = document.createElement("button");
+  mix.className = "section-btn mix";
+  mix.innerHTML = `<strong>Mix it up</strong><span>${MIX_SIZE} random questions from every section</span>`;
+  mix.onclick = () => start("mix");
+  box.appendChild(mix);
+  DATA.categories.forEach(cat => {
+    const n = DATA.questions.filter(q => q.category === cat).length;
+    if (!n) return;
+    const b = document.createElement("button");
+    b.className = "section-btn";
+    b.innerHTML = `<strong>${cat}</strong><span>${n} questions</span>`;
+    b.onclick = () => start(cat);
+    box.appendChild(b);
+  });
+}
+
+function start(key) {
+  currentKey = key;
+  deck = key === "mix" ? shuffle(DATA.questions).slice(0, MIX_SIZE)
+                       : DATA.questions.filter(q => q.category === key);
+  $("studyTitle").textContent = key === "mix" ? "Mix it up" : key;
+  idx = 0; score = 0; missed = []; flipped = false;
+  $("home").hidden = true; $("study").hidden = false;
+  setMode("quiz");
+  window.scrollTo(0, 0);
+}
+
+function setMode(m) {
+  mode = m;
+  $("quizTab").setAttribute("aria-pressed", m === "quiz");
+  $("flashTab").setAttribute("aria-pressed", m === "flash");
+  $("flashWrap").hidden = m !== "flash";
+  if (m === "quiz") { idx = 0; score = 0; missed = []; $("resultCard").hidden = true; $("quizCard").hidden = false; renderQ(); }
+  else { $("quizCard").hidden = true; $("resultCard").hidden = true; idx = 0; flipped = false; renderFlash(); }
+}
+
+function renderQ() {
+  const q = deck[idx];
+  answered = false;
+  $("count").textContent = `Question ${idx + 1} of ${deck.length}`;
+  $("scoreLive").textContent = `Score: ${score}`;
+  $("bar").style.width = `${(idx / deck.length) * 100}%`;
+  $("prompt").textContent = q.prompt;
+  $("hintBox").hidden = true;
+  $("hintBox").textContent = "Hint: " + q.hint;
+  $("hintBtn").hidden = false;
+  $("feedback").innerHTML = "";
+  $("nextBtn").disabled = true;
+  $("nextBtn").textContent = idx === deck.length - 1 ? "See results" : "Next";
+  order = shuffle([0, 1, 2, 3].slice(0, q.options.length));
+  const ul = $("options"); ul.innerHTML = "";
+  order.forEach((orig, i) => {
+    const text = q.options[orig];
+    const li = document.createElement("li");
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.innerHTML = `<span class="letter">${LETTERS[i]}</span><span></span>`;
+    b.lastChild.textContent = text;
+    b.onclick = () => choose(orig);
+    li.appendChild(b); ul.appendChild(li);
+  });
+  $("prompt").setAttribute("tabindex", "-1");
+  $("prompt").focus({ preventScroll: true });
+}
+
+function choose(i) {
+  if (answered) return;
+  answered = true;
+  const q = deck[idx], right = i === q.answer;
+  const btns = $("options").querySelectorAll(".opt");
+  btns.forEach((b, j) => {
+    b.disabled = true;
+    if (order[j] === q.answer) b.classList.add("correct");
+    else if (order[j] === i) b.classList.add("wrong");
+  });
+  if (right) score++; else missed.push(q);
+  $("scoreLive").textContent = `Score: ${score}`;
+  const fb = document.createElement("div");
+  fb.className = "feedback " + (right ? "good" : "bad");
+  fb.innerHTML = `<strong>${right ? "Correct!" : "Not quite. The answer is " + LETTERS[order.indexOf(q.answer)] + "."}</strong>`;
+  fb.appendChild(document.createTextNode(q.explanation));
+  $("feedback").innerHTML = ""; $("feedback").appendChild(fb);
+  $("hintBtn").hidden = true;
+  $("nextBtn").disabled = false;
+  $("nextBtn").focus();
+}
+
+function next() {
+  if (idx < deck.length - 1) { idx++; renderQ(); }
+  else showResults();
+}
+
+function showResults() {
+  $("quizCard").hidden = true; $("resultCard").hidden = false;
+  const pct = Math.round((score / deck.length) * 100);
+  $("finalScore").textContent = `${score} / ${deck.length} (${pct}%)`;
+  $("finalMsg").textContent = pct >= 90 ? "Excellent work. You know this section." :
+                              pct >= 75 ? "Nice job. A little review and you've got it." :
+                                          "Keep going. Review the questions below and try again.";
+  const m = $("missed"); m.innerHTML = "";
+  if (missed.length) {
+    const h = document.createElement("h2"); h.textContent = "Questions to review"; m.appendChild(h);
+    const ol = document.createElement("ul"); ol.className = "review-list";
+    missed.forEach(q => {
+      const li = document.createElement("li");
+      li.innerHTML = "<strong></strong><br><span></span>";
+      li.querySelector("strong").textContent = q.prompt;
+      li.querySelector("span").textContent = "Answer: " + q.options[q.answer];
+      ol.appendChild(li);
+    });
+    m.appendChild(ol);
+  }
+  $("finalScore").setAttribute("tabindex", "-1");
+  $("finalScore").focus();
+}
+
+function renderFlash() {
+  const q = deck[idx], c = $("flashCard");
+  $("flashCount").textContent = `Card ${idx + 1} of ${deck.length}`;
+  c.innerHTML = "";
+  const tag = document.createElement("div"); tag.className = "tag";
+  if (!flipped) {
+    tag.textContent = "Question";
+    const p = document.createElement("p"); p.className = "prompt"; p.style.margin = 0; p.textContent = q.prompt;
+    c.append(tag, p);
+  } else {
+    tag.textContent = "Answer";
+    const a = document.createElement("div"); a.className = "answer"; a.textContent = q.options[q.answer];
+    const e = document.createElement("div"); e.textContent = q.explanation;
+    c.append(tag, a, e);
+  }
+  $("prevCard").disabled = idx === 0;
+  $("nextCard").disabled = idx === deck.length - 1;
+}
+
+$("nextBtn").onclick = next;
+$("hintBtn").onclick = () => { $("hintBox").hidden = false; $("hintBtn").hidden = true; };
+$("retryBtn").onclick = () => start(currentKey);
+$("homeBtn").onclick = $("backBtn").onclick = () => { $("study").hidden = true; $("home").hidden = false; window.scrollTo(0, 0); };
+$("quizTab").onclick = () => setMode("quiz");
+$("flashTab").onclick = () => setMode("flash");
+$("flashCard").onclick = () => { flipped = !flipped; renderFlash(); };
+$("prevCard").onclick = () => { if (idx > 0) { idx--; flipped = false; renderFlash(); } };
+$("nextCard").onclick = () => { if (idx < deck.length - 1) { idx++; flipped = false; renderFlash(); } };
+
+buildHome();
+</script>
+</body>
+</html>
