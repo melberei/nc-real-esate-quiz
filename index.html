@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NC Real Estate Exam Practice Quiz</title>
+<title>NC Real Estate Exam Practice: National Portion</title>
 <meta name="description" content="Free practice quizzes for the NC real estate exam, organized by exam section.">
 <style>
   :root {
@@ -32,6 +32,10 @@
   main { max-width: 720px; margin: 0 auto; padding: 24px 16px 48px; }
   h1 { font-size: 1.6rem; margin: 8px 0 4px; }
   h2 { font-size: 1.25rem; margin: 0 0 12px; }
+  .eyebrow { margin: 0; font-size: .85rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+  .state-block { margin-top: 40px; padding: 20px; border: 1.5px dashed var(--line); border-radius: var(--radius); background: rgba(255,255,255,.5); }
+  .state-block h1 { font-size: 1.35rem; margin-top: 0; }
+  .badge { display: inline-block; vertical-align: middle; font-size: .75rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; background: #fff1cc; color: #7a5300; border: 1px solid #f0d58a; border-radius: 999px; padding: 3px 10px; margin-left: 6px; }
   .sub { color: var(--muted); margin: 0 0 24px; }
   .card {
     background: var(--card);
@@ -121,11 +125,17 @@
 <main>
   <!-- Home -->
   <section id="home">
-    <h1>NC Real Estate Exam Practice</h1>
-    <p class="sub">Pick a practice set, then a section. Sections follow the national portion of the exam. Take each one as a quiz, or flip through it as flashcards.</p>
+    <p class="eyebrow">NC Real Estate Pre-Licensing Exam</p>
+    <h1>National Portion Practice Questions</h1>
+    <p class="sub">These questions cover the national portion of the exam. Pick a practice set, then a section. Take each one as a quiz, or flip through it as flashcards.</p>
     <div class="tabs" role="group" aria-label="Practice set" id="setTabs" style="margin-bottom:8px"></div>
     <p class="sub" id="setDesc" style="margin:8px 0 16px"></p>
     <div class="grid" id="sections"></div>
+
+    <div class="state-block">
+      <h1>State of North Carolina Practice Questions <span class="badge">Coming soon</span></h1>
+      <p class="sub" style="margin:0">Questions on NC license law, Commission rules, and other state topics will be added here.</p>
+    </div>
   </section>
 
   <!-- Quiz / flashcards -->
