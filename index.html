@@ -34,6 +34,11 @@
   h2 { font-size: 1.25rem; margin: 0 0 12px; }
   .eyebrow { margin: 0; font-size: .85rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
   .state-block { margin-top: 40px; padding: 20px; border: 1.5px solid var(--line); border-top: 4px solid var(--accent); border-radius: var(--radius); background: rgba(255,255,255,.6); }
+  .download { display: flex; gap: 14px; align-items: center; text-decoration: none; color: inherit; background: var(--card); border: 1.5px solid var(--accent); border-radius: var(--radius); padding: 14px 16px; margin: 0; }
+  .download:hover { background: var(--accent-soft); }
+  .download strong { color: var(--accent); }
+  .dl-icon { flex: none; width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; font-size: 1.3rem; }
+  .dl-sub { color: var(--muted); font-size: .9rem; }
   .portion { font-size: 1.3rem; margin: 0 0 6px; }
   .state-block .portion { margin-top: 0; }
   .badge { display: inline-block; vertical-align: middle; font-size: .75rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; background: #fff1cc; color: #7a5300; border: 1px solid #f0d58a; border-radius: 999px; padding: 3px 10px; margin-left: 6px; }
@@ -141,6 +146,15 @@
       <div class="tabs" role="group" aria-label="NC practice set" id="stateTabs" style="margin-bottom:8px"></div>
       <p class="sub" id="stateDesc" style="margin:8px 0 16px"></p>
       <div class="grid" id="stateSections"></div>
+    </div>
+
+    <div class="state-block resources">
+      <h2 class="portion">Study Resources</h2>
+      <p class="sub">Extra materials to download and keep.</p>
+      <a class="download" href="NC_Real_Estate_Acronym_Cheat_Sheet.pdf" download data-goatcounter-click="download: acronym cheat sheet" data-goatcounter-title="Acronym cheat sheet PDF">
+      <span class="dl-icon" aria-hidden="true">&#8681;</span>
+      <span><strong>Download the Acronym Cheat Sheet</strong><br><span class="dl-sub">Every acronym, memory hook, deadline and formula in one PDF (19 pages)</span></span>
+      </a>
     </div>
   </section>
 
