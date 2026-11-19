@@ -126,7 +126,6 @@
   [hidden] { display: none !important; }
   @media (max-width: 480px) { .card { padding: 18px; } .prompt { font-size: 1.05rem; } }
 </style>
-<script data-goatcounter="https://melberei.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
 <main>
@@ -151,7 +150,7 @@
     <div class="state-block resources">
       <h2 class="portion">Study Resources</h2>
       <p class="sub">Extra materials to download and keep.</p>
-      <a class="download" href="NC%20Real%20Estate%20Acronym%20Cheat%20Sheet.pdf" target="_blank" rel="noopener" data-goatcounter-click="download: acronym cheat sheet" data-goatcounter-title="Acronym cheat sheet PDF">
+      <a class="download" href="NC%20Real%20Estate%20Acronym%20Cheat%20Sheet.pdf" target="_blank" rel="noopener">
       <span class="dl-icon" aria-hidden="true">&#8681;</span>
       <span><strong>Download the Acronym Cheat Sheet</strong><br><span class="dl-sub">Every acronym, memory hook, deadline and formula in one PDF (19 pages)</span></span>
       </a>
@@ -274,12 +273,6 @@ function start(key, setIdx) {
   deck = key === "mix" ? shuffle(SET.questions).slice(0, MIX_SIZE)
                        : SET.questions.filter(q => q.category === key);
   $("studyTitle").textContent = SET.name + ": " + (key === "mix" ? "Mix it up" : key);
-  try {
-    if (window.goatcounter && window.goatcounter.count) {
-      const label = "quiz: " + SET.name + " / " + (key === "mix" ? "Mix it up" : key);
-      window.goatcounter.count({ path: label, title: label, event: true });
-    }
-  } catch (e) {}
   idx = 0; score = 0; missed = []; flipped = false;
   $("home").hidden = true; $("study").hidden = false;
   setMode("quiz");
